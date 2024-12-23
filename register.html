@@ -1,0 +1,70 @@
+<!-- helped by ChatGPT-->
+
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>登録</title>
+</head>
+<body>
+  <h1>データの送信</h1>
+
+  <!-- URL, ユーザー名, 入力データを入力するためのフォーム -->
+  <form id="dataForm">
+    <label for="scriptUrl">指定されたURL:</label><br>
+    <input type="text" id="scriptUrl" name="scriptUrl" required><br><br>
+    
+    <label for="username">ユーザー名:</label><br>
+    <input type="text" id="username" name="username" required><br><br>
+    
+    <label for="inputData">パスワード:</label><br>
+    <!-- パスワードを入力するための入力欄（タイプはpassword） -->
+    <input type="password" id="inputData" name="inputData" required>
+    
+    <!-- パスワードの表示/非表示切り替えボタン -->
+    <button type="button" onclick="togglePassword()">表示/非表示</button><br><br>
+
+    <button type="button" onclick="sendData()">送信</button>
+  </form>
+
+  <script>
+    // パスワードの表示・非表示を切り替える関数
+    function togglePassword() {
+      var passwordField = document.getElementById("inputData");
+      var type = passwordField.type === "password" ? "text" : "password";
+      passwordField.type = type;
+    }
+
+    function sendData() {
+      // フォームのデータを取得
+      var scriptUrl = document.getElementById("scriptUrl").value;
+      var username = document.getElementById("username").value;
+      var inputData = document.getElementById("inputData").value;
+
+      // 入力が空でないかチェック
+      if (scriptUrl === "" || username === "" || inputData === "") {
+        alert("すべてのフィールドに入力してください。");
+        return;
+      }
+
+      // フェッチAPIを使ってPOSTリクエストを送信
+      fetch(scriptUrl, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded"
+        },
+        body: "username=" + encodeURIComponent(username) + "&inputData=" + encodeURIComponent(inputData)  // ユーザー名とデータを送信
+      })
+      .then(response => response.text())
+      .then(data => {
+        alert("登録が完了しました！");  // 成功メッセージ
+        document.getElementById("inputData").value = "";  // 入力欄をクリア
+      })
+      .catch(error => {
+        alert("エラーが発生しました: " + error);  // エラーメッセージ
+      });
+    }
+  </script>
+</body>
+</html>
